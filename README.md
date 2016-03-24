@@ -79,3 +79,15 @@ I'm working on a page [https://berr.yt/h/dnscrypt-resolvers/](https://berr.yt/h/
 
 TODO:  
 1. sorting of columns  
+
+## sources and further reading
+- [http://dnscrypt.org/](http://dnscrypt.org/)  
+- [https://github.com/jedisct1/dnscrypt-proxy](https://github.com/jedisct1/dnscrypt-proxy)
+- [https://github.com/okTurtles/dnschain](https://github.com/okTurtles/dnschain)  
+- [https://namecoin.info/](https://namecoin.info/)  
+- [http://emercoin.com/EMCDNS_and_NVS](http://emercoin.com/EMCDNS_and_NVS)  
+- [https://www.opennicproject.org/](https://www.opennicproject.org/)  
+
+## TODO
+1. Add my windows version of dnscrapt  
+2. Talk about alt dns like opennic and namecoin/dnschain  
