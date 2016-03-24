@@ -1,0 +1,129 @@
+#!/bin/bash
+# `dnscrapt' for lunix
+# (c) brr 20160324-1522 [berr.yt]
+##
+
+resolv=/etc/resolv.conf
+rfile=/usr/local/share/dnscrypt-proxy/dnscrypt-resolvers.csv
+resolversurl="https://raw.githubusercontent.com/jedisct1/dnscrypt-proxy/master/dnscrypt-resolvers.csv" 
+local="127.0.0.1:53"
+localresolv="127.0.0.1#53"
+local2="127.0.0.1:54"
+localresolv="127.0.0.1#54"
+
+me=`basename $0`
+if [ $(id -u) -eq 0 ]; then
+	if [ -n "$1" ]; then
+		cmd=$1
+		if [ $cmd == "update" ]; then
+			wget -v $resolversurl -O $rfile
+			exit
+		elif [ $cmd == "list" ]; then
+			echo "# DNSSEC+NO_LOGS+NAMECOIN"
+			grep yes,yes,yes $rfile | sed "s/,.*//"
+			echo "# DNSSEC+NO_LOGS"
+			grep yes,yes,no $rfile | sed "s/,.*//"
+			exit
+		fi
+		chattr -i $resolv
+		killall -q dnscrypt-proxy
+		if [ $cmd == "level3" ]; then
+			echo "nameserver 4.2.2.1" > $resolv
+			echo "nameserver 4.2.2.2" >> $resolv
+			echo "nameserver 4.2.2.3" >> $resolv
+			echo "nameserver 4.2.2.4" >> $resolv
+			echo "nameserver 4.2.2.5" >> $resolv
+			echo "nameserver 4.2.2.6" >> $resolv
+		elif [ $cmd == "opendns" ]; then
+			echo "nameserver 208.67.222.222" > $resolv
+			echo "nameserver 2620:0:ccc::2" >> $resolv
+			echo "nameserver 208.67.220.220" >> $resolv
+			echo "nameserver 2620:0:ccd::2" >> $resolv
+			echo "nameserver 208.67.222.220" >> $resolv
+			echo "nameserver 208.67.220.222" >> $resolv
+		elif [ $cmd == "okturtles" ]; then
+			echo "nameserver 192.184.93.146" > $resolv
+		elif [ $cmd == "opennic-au" ]; then
+			echo "nameserver 111.67.16.202" > $resolv
+			echo "nameserver 108.61.213.134" >> $resolv
+			echo "nameserver 119.252.20.75" >> $resolv
+		elif [ $cmd == "opennic-ch" ]; then
+			echo "nameserver 31.3.135.232" > $resolv
+		elif [ $cmd == "opennic-de" ]; then
+			echo "nameserver 2a01:4f8:161:4109::6" > $resolv
+			echo "nameserver 5.9.49.12" >> $resolv
+			echo "nameserver 2a01:4f8:191:306c::2" >> $resolv
+			echo "nameserver 144.76.133.38" >> $resolv
+		elif [ $cmd == "opennic-ec" ]; then
+			echo "nameserver 186.3.17.230" > $resolv
+		elif [ $cmd == "opennic-fr" ]; then
+			echo "nameserver 2001:41d0:52:f00::413" > $resolv
+			echo "nameserver 151.80.147.153" >> $resolv
+			echo "nameserver 87.98.175.85" >> $resolv
+			echo "nameserver 87.98.242.252" >> $resolv
+			echo "nameserver 5.135.183.146" >> $resolv
+			echo "nameserver 2001:41d0:8:be92::1" >> $resolv
+			echo "nameserver 212.47.233.10" >> $resolv
+		elif [ $cmd == "opennic-it" ]; then
+			echo "nameserver 2a00:dcc0:eda:98:183:193:d85a:389b" > $resolv
+			echo "nameserver 193.183.98.154" >> $resolv
+		elif [ $cmd == "opennic-jp" ]; then
+			echo "nameserver 2400:8900::f03c:91ff:fe70:c452" > $resolv
+			echo "nameserver 106.186.17.181" >> $resolv
+		elif [ $cmd == "opennic-ro" ]; then
+			echo "nameserver 2001:470:1f15:235::1" > $resolv
+			echo "nameserver 89.18.27.34" >> $resolv
+		elif [ $cmd == "opennic-si" ]; then
+			echo "nameserver 84.255.239.131" > $resolv
+		elif [ $cmd == "opennic-uk" ]; then
+			echo "nameserver 185.10.203.37" > $resolv
+		elif [ $cmd == "opennic-us" ]; then
+			echo "nameserver 2600:3c00::02:f053" > $resolv
+			echo "nameserver 107.150.40.234" >> $resolv
+			echo "nameserver 75.127.14.107" >> $resolv
+			echo "nameserver 107.170.95.180" >> $resolv
+			echo "nameserver 69.164.196.21" >> $resolv
+			echo "nameserver 2605:f700:c0:1::68b0:f215" >> $resolv
+			echo "nameserver 198.98.114.141" >> $resolv
+			echo "nameserver 2607:ff68:100:31:0:243:35:53" >> $resolv
+			echo "nameserver 208.115.243.35" >> $resolv
+			echo "nameserver 2607:ff68:100:31:0:243:38:53" >> $resolv
+			echo "nameserver 208.115.243.38" >> $resolv
+			echo "nameserver 2001:19f0:5c00:94cc:1e6b:1b64:93b:b21b" >> $resolv
+			echo "nameserver 104.207.143.56" >> $resolv
+		else
+			test=`cat $rfile | grep -e "^$cmd"`
+			if [ "$test" == "" ]; then
+				echo "$me: Unlisted resolver: $cmd"
+				exit
+			else
+				dnscrypt-proxy -a 127.0.0.1:53 -E -R $cmd -d -u dnscrypt
+				echo "nameserver 127.0.0.1#53" > $resolv
+			fi
+			if [ -n "$2" ]; then
+				test=`cat $rfile | grep -e "^$2"`
+				if [ "$test" == "" ]; then
+					echo "$me: Unlisted resolver: $2"
+					exit
+				else
+					dnscrypt-proxy -a 127.0.0.1:54 -E -R $2 -d -u dnscrypt
+					echo "nameserver 127.0.0.1#54" >> $resolv
+				fi
+			fi
+		fi
+		chattr +i $resolv
+		lol=`host example.com`
+		echo $lol
+		logger -p user.info -t -bash $lol
+	else
+		echo "Usage: $me <update|list>"
+		echo "  or   $me <dnscrypt-resolver> [<backup-dnscrypt-resolver>]"
+		echo "  or   $me <opennic-au|opennic-ch|opennic-de|opennic-ec|opennic-fr|opennic-it|opennic-jp|opennic-ro|opennic-si|opennic-uk|opennic-us>"
+		echo "  or   $me <okturtles|level3|opendns>"
+		echo ""
+	fi
+else
+	echo "$me: Permission denied"
+	echo ""
+fi
+#EOF
