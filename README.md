@@ -1,11 +1,11 @@
-# dns-crap
+# dns crap
 scripts and info related to dnscrypt and alternative dns systems
 
 ## script: dnscrapt
 A script designed to make managing dnscrypt (and regular dns) easier for me on my CentOS servers.
 
 Install:
-```bash
+```shell
 chmod +x dnscrapt
 mv dnscrapt /usr/sbin/
 ```
