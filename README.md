@@ -1,7 +1,7 @@
 # dns crap
 scripts and info related to dnscrypt and alternative dns systems
 
-## roots cript: dnscrapt
+## root script: dnscrapt
 A script designed to make managing dnscrypt (and regular dns) easier for me on my CentOS servers.
 
 Requirements:  
