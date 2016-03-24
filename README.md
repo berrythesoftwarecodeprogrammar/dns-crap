@@ -5,7 +5,7 @@ scripts and info related to dnscrypt and alternative dns systems
 A script designed to make managing dnscrypt (and regular dns) easier for me on my CentOS servers.
 
 Install:
-```shell
+```sh
 chmod +x dnscrapt
 mv dnscrapt /usr/sbin/
 ```
